@@ -21,7 +21,7 @@ class RagisterUserSerializer(serializers.ModelSerializer):
 class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields =['username']
+        fields =['id','username']
     
 class PersonalChatMessageSerializer(serializers.ModelSerializer):
     sender=UserNameSerializer(read_only=True)
