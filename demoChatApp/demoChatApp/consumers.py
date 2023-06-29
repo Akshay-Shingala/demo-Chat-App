@@ -75,5 +75,6 @@ class MyPersonalChatWebsocketConsumer(AsyncJsonWebsocketConsumer):
         messages=PersonalChatMessage.objects.filter(personalchat=self.chanelId[0])
         dataSeralizer=PersonalChatMessageSerializer(data=messages,many=True)
         dataSeralizer.is_valid()
-        return dataSeralizer.data
+        print(dataSeralizer.data,{'sessionId': self.scope['user'].id})
+        return (dataSeralizer.data,{'sessionId': self.scope['user'].id})
  
