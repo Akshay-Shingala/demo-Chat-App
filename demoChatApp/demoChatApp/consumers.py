@@ -53,7 +53,7 @@ class MyPersonalChatWebsocketConsumer(AsyncJsonWebsocketConsumer):
         print('Event:', event)
         if not event.get('sent', False):
             event['sent'] = True
-            data =await self.saveMessage(json.loads(event['message']).get('text', None),json.loads(event['message']).get('user', None))
+            await self.saveMessage(json.loads(event['message']).get('text', None),json.loads(event['message']).get('user', None))
         await self.send_json({'yourmsg':json.loads(event['message']).get('text', None),'user':json.loads(event['message']).get('user', None)})
         # await self.send_json({'yourmsg':json.loads(event['message']).get('data', None),'user':self.scope["user"].username})
     async def disconnect(self, code):

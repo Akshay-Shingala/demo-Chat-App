@@ -61,14 +61,7 @@
         <div class="row justify-content-center h-100">
             <div class="col-md-4 col-xl-3 chat">
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
-                    <div class="card-header">
-                        <div class="input-group">
-                            <input type="text" placeholder="Search..." name="" class="form-control search">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="card-body contacts_body">
                         <ui class="contacts" id="userListsDispaly">
                             <!-- <li class="active">
@@ -150,13 +143,10 @@
                                     class="rounded-circle user_img">
                                 <span class="online_icon"></span>
                             </div>
-                            <div class="user_info">
-                                <span id="resiverUserName">Chat with Khalid</span>
 
-                            </div>
-                            <div class="video_cam">
-                                <span><i class="fas fa-video"></i></span>
-                                <span><i class="fas fa-phone"></i></span>
+                            <div class="video_cam ">
+                                <span><a href="" id="videoId"><i class="fas fa-video"></i></a></span>
+
                             </div>
                         </div>
                         <!-- <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span> -->
@@ -193,6 +183,7 @@
         const userMenu = document.getElementById('userListsDispaly')
         const userList = new WebSocket("ws://localhost:8000/usersLists/");
         const userMSGList = document.getElementById('messageBody');
+
         userList.onopen = function (e) {
             console.log("User List opened")
             console.log(e)
@@ -207,26 +198,41 @@
                 for (const key of data.data) {
                     console.log(key.username)
                     const usetid = "{{ user.id }}"
-                    print(typeof key.username)
-                    <!-- const username = String(key.username) -->
+                    //print(typeof key.username)
+                    const username = String(key.username)
                     if (usetid != key.id) {
-                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ')"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://2.bp.blogspot.com/-8ytYF7cfPkQ/WkPe1-rtrcI/AAAAAAAAGqU/FGfTDVgkcIwmOTtjLka51vineFBExJuSACLcBGAs/s320/31.jpg" class="rounded-circle user_img"><span class="online_icon offline"></span></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
+                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ',event)"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://2.bp.blogspot.com/-8ytYF7cfPkQ/WkPe1-rtrcI/AAAAAAAAGqU/FGfTDVgkcIwmOTtjLka51vineFBExJuSACLcBGAs/s320/31.jpg" class="rounded-circle user_img"><span class="online_icon offline"></span></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
                     }
                 }
 
             }
         }
+
         // show user messages
         ws = ""
-        function messageLoaded(id) {
+        function messageLoaded(id, ev) {
             userMSGList.innerHTML = ''
             ws = new WebSocket("ws://127.0.0.1:8000/Personal/" + id);
+            const userMenuItems = userMenu.getElementsByTagName('div');
+            for (let i = 0; i < userMenuItems.length; i++) {
+                userMenuItems[i].classList.remove('active');
+            }
+            ev.currentTarget.classList.add('active');
+
             //console.log(id,name)
+            var videoLink = "http://127.0.0.1:8000/video/" + id
+            console.log(videoLink)
+            var videoId = document.getElementById("videoId");
+            videoId.href = videoLink;
+
+            console.log("*********************", ev)
+            //this.classList.add("active")
             //document.getElementById('resiverUserName').text = "chat with " + "name"
             ws.onopen = function (event) {
                 console.log("ws.onopen")
                 console.log(event)
             }
+
             ws.onmessage =
                 function (event) {
                     const jsondata = JSON.parse(event.data)
@@ -244,6 +250,7 @@
                     }
 
                 }
+
         }
         // send message to server
         const messageInput = document.getElementById('messageInput');
@@ -251,7 +258,8 @@
 
         function sendMessage(event) {
             const message = messageInput.value;
-            ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }} }));
+            ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }}
+        }));
         messageInput.value = '';
         event.preventDefault();
         ws.onmessage = (event) => {
