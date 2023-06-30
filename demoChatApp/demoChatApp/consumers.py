@@ -43,16 +43,38 @@ class MyPersonalChatWebsocketConsumer(AsyncJsonWebsocketConsumer):
         print("Received data", text_data)
         await self.channel_layer.group_send(self.groupName, {
                 'type': 'chat.message',
-                'message': text_data
+                'message': text_data,
+                'sent': False
             })
         return await super().receive(text_data, bytes_data, **kwargs)
     async def chat_message(self, event):
+        print('Event:', type(event))
+        print('Event:', json.loads(event['message']).get('text', None))
         print('Event:', event)
-        data=await self.saveMessage(event['message'])
+        if not event.get('sent', False):
+            event['sent'] = True
+            data =await self.saveMessage(json.loads(event['message']).get('text', None),json.loads(event['message']).get('user', None))
+        await self.send_json({'yourmsg':json.loads(event['message']).get('text', None),'user':json.loads(event['message']).get('user', None)})
+        # await self.send_json({'yourmsg':json.loads(event['message']).get('data', None),'user':self.scope["user"].username})
     async def disconnect(self, code):
         print('Disconnect:', code)
 
 
+    @database_sync_to_async
+    def saveMessage(self,message,user):
+        print(message)
+        # self.scope['user']
+        PCobject=PersonalChat.objects.get(id=self.groupName)
+        print(self.scope['user'].username   )
+        print("--------",PCobject)
+        print(user, user==PCobject.sender.id,PCobject.sender.id)    
+        if user==PCobject.sender.id:
+            return PersonalChatMessage.objects.create(personalchat=PCobject,sender=PCobject.sender,resiver=PCobject.resiver,message=message)
+        else:
+            return PersonalChatMessage.objects.create(personalchat=PCobject,sender=PCobject.resiver,resiver=PCobject.sender,message=message)
+        # return PersonalChat.objects.get(id=self.groupName)
+        # return obj.save()
+        # return "sdfdsfdf"
     @database_sync_to_async
     def getOrCreateconnection(self,sender,resiver):
         chanelId=PersonalChat.objects.filter(Q(sender=sender,resiver=resiver)|Q(sender=resiver,resiver=sender))
@@ -65,16 +87,12 @@ class MyPersonalChatWebsocketConsumer(AsyncJsonWebsocketConsumer):
     
 
 
-    @database_sync_to_async
-    def saveMessage(self,MSG):
-        obj=PersonalChat.objects.get(id=int(self.groupName))
-        return PersonalChatMessage.objects.create(personalchat=obj,sender=obj.sender,resiver=obj.resiver,message=json.loads(MSG)['text'])
+    
     @database_sync_to_async
     def getAllMessages(self):
         print(self.chanelId[0])
         messages=PersonalChatMessage.objects.filter(personalchat=self.chanelId[0])
         dataSeralizer=PersonalChatMessageSerializer(data=messages,many=True)
         dataSeralizer.is_valid()
-        print(dataSeralizer.data,{'sessionId': self.scope['user'].id})
         return (dataSeralizer.data,{'sessionId': self.scope['user'].id})
  
