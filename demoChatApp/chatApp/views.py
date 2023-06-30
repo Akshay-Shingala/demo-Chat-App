@@ -42,7 +42,7 @@ class UserConsumer(ListModelMixin,RetrieveModelMixin,GenericAsyncAPIConsumer):
     serializer_class=userListSeralizer
 
 
-def loginPage(request):
+def loginPage(request,s=None):
     return TemplateResponse(request,"loginRegister.html")
 
 def chatPage(request):
