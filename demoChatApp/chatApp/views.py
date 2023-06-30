@@ -48,3 +48,11 @@ def loginPage(request):
 def chatPage(request):
     return TemplateResponse(request,"index.html")
 
+
+
+
+def video(request,room,created="created"):
+    if 'email' in request.session.keys():
+        return  TemplateResponse(request,'video.html',{'room':room,'created':created})
+    
+    # return redirect(reverse('login'))
