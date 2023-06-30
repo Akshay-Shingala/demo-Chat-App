@@ -9,6 +9,8 @@ from django.contrib.auth import authenticate
 from rest_framework.generics import *
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from djangochannelsrestframework.mixins import  ListModelMixin,RetrieveModelMixin
+from django.template.response import TemplateResponse
+
 class LoginView(views.APIView):
     # This view should be accessible also for unauthenticated users.
     permission_classes = (permissions.AllowAny,)
@@ -38,3 +40,11 @@ class RagisterUserAPIView(CreateAPIView):
 class UserConsumer(ListModelMixin,RetrieveModelMixin,GenericAsyncAPIConsumer):
     queryset=User.objects.all()
     serializer_class=userListSeralizer
+
+
+def loginPage(request):
+    return TemplateResponse(request,"loginRegister.html")
+
+def chatPage(request):
+    return TemplateResponse(request,"index.html")
+

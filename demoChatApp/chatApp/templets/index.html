@@ -8,6 +8,7 @@
 
 <head>
     <title>Chat</title>
+    {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
@@ -15,16 +16,47 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
-    <link rel="stylesheet" type="text/css" href="chatPage.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'chatPage.css' %}">
 
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
-    <script type="text/javascript" src="chatPage.js"></script>
+    <script type="text/javascript" src="{% static 'chatPage.js' %}"></script>
 
 </head>
 <!--Coded With Love By Mutiullah Samim-->
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Chat app</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">{{user.username}} <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Dropdown link
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
             <div class="col-md-4 col-xl-3 chat">
@@ -119,8 +151,8 @@
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
-                                <span>Chat with Khalid</span>
-                                <p>1767 Messages</p>
+                                <span id="resiverUserName">Chat with Khalid</span>
+
                             </div>
                             <div class="video_cam">
                                 <span><i class="fas fa-video"></i></span>
@@ -157,6 +189,7 @@
 
     <script type="text/javascript">
         // get and print users lists
+        console.log({{ user.id }})
         const userMenu = document.getElementById('userListsDispaly')
         const userList = new WebSocket("ws://localhost:8000/usersLists/");
         const userMSGList = document.getElementById('messageBody');
@@ -173,7 +206,12 @@
                 console.log(userMenu)
                 for (const key of data.data) {
                     console.log(key.username)
-                    userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ')"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://2.bp.blogspot.com/-8ytYF7cfPkQ/WkPe1-rtrcI/AAAAAAAAGqU/FGfTDVgkcIwmOTtjLka51vineFBExJuSACLcBGAs/s320/31.jpg" class="rounded-circle user_img"><span class="online_icon offline"></span></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
+                    const usetid = "{{ user.id }}"
+                    print(typeof key.username)
+                    <!-- const username = String(key.username) -->
+                    if (usetid != key.id) {
+                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ')"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://2.bp.blogspot.com/-8ytYF7cfPkQ/WkPe1-rtrcI/AAAAAAAAGqU/FGfTDVgkcIwmOTtjLka51vineFBExJuSACLcBGAs/s320/31.jpg" class="rounded-circle user_img"><span class="online_icon offline"></span></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
+                    }
                 }
 
             }
@@ -183,6 +221,8 @@
         function messageLoaded(id) {
             userMSGList.innerHTML = ''
             ws = new WebSocket("ws://127.0.0.1:8000/Personal/" + id);
+            //console.log(id,name)
+            //document.getElementById('resiverUserName').text = "chat with " + "name"
             ws.onopen = function (event) {
                 console.log("ws.onopen")
                 console.log(event)
@@ -198,7 +238,6 @@
                             console.log(key, true)
                         }
                         else {
-                            
                             userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + key.message + " <span class='msg_time'>8:40 AM, Today</span> </div> </div >"
                             console.log(key, false)
                         }
@@ -212,24 +251,24 @@
 
         function sendMessage(event) {
             const message = messageInput.value;
-            ws.send(JSON.stringify({ 'text': message }));
-            messageInput.value = '';
-            event.preventDefault();
-            ws.onmessage = (event) => {
-                //const message = JSON.parse(event);
-                console.log(event)
-                let data = JSON.parse(event.data)
-                if (data.user) {
-                    userMSGList.innerHTML += "<div class='d-flex justify-content-end mb-4'><div class='msg_cotainer_send'>" + data.yourmsg + "<span class='msg_time_send'>8:55 AM, Today</span></div><div class='img_cont_msg'><img src='' class='rounded-circle user_img_msg'></div></div >"
-                    //console.log(key, true)
-                }
-                else {
-                    userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + data.yourmsg + " <span class='msg_time'>8:40 AM, Today</span> </div> </div >"
-                    //console.log(key, false)
-                }
-                // Update the chat UI with the received message
-                // ...
-            };
+            ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }} }));
+        messageInput.value = '';
+        event.preventDefault();
+        ws.onmessage = (event) => {
+            //const message = JSON.parse(event);
+            console.log(event)
+            let data = JSON.parse(event.data)
+            if (data.user == sessionId.sessionId) {
+                userMSGList.innerHTML += "<div class='d-flex justify-content-end mb-4'><div class='msg_cotainer_send'>" + data.yourmsg + "<span class='msg_time_send'>8:55 AM, Today</span></div><div class='img_cont_msg'><img src='' class='rounded-circle user_img_msg'></div></div >"
+                //console.log(key, true)
+            }
+            else {
+                userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + data.yourmsg + " <span class='msg_time'>8:40 AM, Today</span> </div> </div >"
+                //console.log(key, false)
+            }
+            // Update the chat UI with the received message
+            // ...
+        };
         }
 
         sendButton.addEventListener('click', (event) => {

@@ -1,9 +1,12 @@
 from django.urls import path,include
 from .views import LoginView,RagisterUserAPIView
-from .views import UserConsumer
+from .views import UserConsumer,loginPage,chatPage
 urlpatterns = [
-    path('',include('rest_framework.urls')),
     path('LoginUser/',LoginView.as_view(),name="Login"),
     path('ragister/',RagisterUserAPIView.as_view(),name="Ragister"),
-    path('usersLists/',UserConsumer.as_asgi(),name="Ragister")
+    path('usersLists/',UserConsumer.as_asgi(),name="Ragister"),
+    path('login/',loginPage,name="LoginPage"),
+    path('chat/',chatPage,name="chatPage"),
+    path('',include('rest_framework.urls')),
+    
 ]
