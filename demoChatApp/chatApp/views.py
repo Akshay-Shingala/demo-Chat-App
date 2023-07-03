@@ -54,12 +54,13 @@ class UserConsumer(ListModelMixin,RetrieveModelMixin,GenericAsyncAPIConsumer):
 def loginPage(request,s=None):
     return TemplateResponse(request,"loginRegister.html",{'form':RagisterUserSerializer})
 
+@login_required(login_url='/')
 def chatPage(request):
     return TemplateResponse(request,"index.html")
 
 
 
-
+@login_required(login_url='/')
 def video(request,room,created="created"):
     print(room)
     resiver = User.objects.get(id=room)
@@ -85,7 +86,7 @@ def video(request,room,created="created"):
 
 
 
-@login_required
+@login_required(login_url='/')
 def logoutview(request):
     logout(request)   
-    return redirect("/login/")
+    return redirect("/")
