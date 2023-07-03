@@ -1,6 +1,10 @@
-*.sqlite3,
+demoChatApp/db.sqlite3
 demoChatAppENV/
 __pycache__/
+<<<<<<< HEAD
 migrations/
 demoChatApp/db.sqlite3
 demoChatApp/db.sqlite3
+=======
+migrations
+>>>>>>> JSMSGupdate

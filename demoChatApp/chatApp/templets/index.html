@@ -37,11 +37,11 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="#">{{user.username}} <span class="sr-only">(current)</span></a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a class="nav-link" href="/logoutview/">Logout</a>
                 </li>
-                
+
             </ul>
         </div>
     </nav>
@@ -129,7 +129,7 @@
                             <div class="img_cont">
                                 <img id="friendDP" src="https://wallpaperaccess.com/full/3036188.jpg"
                                     class="rounded-circle user_img">
-                                <span class="online_icon"></span>
+                                <!-- <span class="online_icon"></span> -->
                             </div>
 
                             <div class="video_cam ">
@@ -164,7 +164,10 @@
             </div>
         </div>
     </div>
-
+    <link rel="stylesheet" href="{% static 'alertifyjs/css/alertify.min.css' %}" />
+    <!-- include a theme -->
+    <link rel="stylesheet" href="{% static 'alertifyjs/css/themes/default.min.css' %}" />
+    <script type="text/javascript" src="{% static 'alertifyjs/alertify.min.js' %}"></script>
     <script type="text/javascript">
         // get and print users lists
         
@@ -189,7 +192,7 @@
                     //print(typeof key.username)
                     const username = String(key.username)
                     if (usetid != key.id) {
-                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ',event)"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://wallpaperaccess.com/full/3036188.jpg" class="rounded-circle user_img"><span class="online_icon offline"></span></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
+                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ',event)"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://wallpaperaccess.com/full/3036188.jpg" class="rounded-circle user_img"></div><div class="user_info"><span>' + key.username + '</span></div></div></li></div>'
                     }
                 }
 
@@ -202,10 +205,7 @@
             userMSGList.innerHTML = ''
             ws = new WebSocket("ws://127.0.0.1:8000/Personal/" + id);
             const userMenuItems = userMenu.getElementsByTagName('div');
-            var friendDP = document.getElementById('friendDP');
-            var button = ev.currentTarget;
-            var img = button.previousSibling;
-            friendDP.src = img.src;
+
             console.log(friendDP.src)
             console.log(ev.currentTarget.src)
             for (let i = 0; i < userMenuItems.length; i++) {
@@ -233,11 +233,11 @@
                     const message = jsondata.messages[0]
                     for (const key of message) {
                         if (key.sender.id == sessionId.sessionId) {
-                            userMSGList.innerHTML += "<div class='d-flex justify-content-end mb-4'><div class='msg_cotainer_send'>" + key.message + "<span class='msg_time_send'>8:55 AM, Today</span></div><div class='img_cont_msg'><img src='https://wallpaperaccess.com/full/6908401.jpg' class='rounded-circle user_img_msg'></div></div >"
+                            userMSGList.innerHTML += "<div class='d-flex justify-content-end mb-4'><div class='msg_cotainer_send'>" + key.message + "</div><div class='img_cont_msg'><img src='https://wallpaperaccess.com/full/6908401.jpg' class='rounded-circle user_img_msg'></div></div >"
                             console.log(key, true)
                         }
                         else {
-                            userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://wallpaperaccess.com/full/3036188.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + key.message + " <span class='msg_time'>8:40 AM, Today</span> </div> </div >"
+                            userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://wallpaperaccess.com/full/3036188.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + key.message + "  </div> </div >"
                             console.log(key, false)
                         }
                     }
@@ -251,7 +251,8 @@
 
         function sendMessage(event) {
             const message = messageInput.value;
-            ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }}
+            if (message.trim() != "") {
+                ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }}
         }));
         messageInput.value = '';
         event.preventDefault();
@@ -260,20 +261,31 @@
             console.log(event)
             let data = JSON.parse(event.data)
             if (data.user == sessionId.sessionId) {
-                userMSGList.innerHTML += "<div class='d-flex justify-content-end mb-4'><div class='msg_cotainer_send'>" + data.yourmsg + "<span class='msg_time_send'>8:55 AM, Today</span></div><div class='img_cont_msg'><img src='https://wallpaperaccess.com/full/6908401.jpg' class='rounded-circle user_img_msg'></div></div >"
+                userMSGList.innerHTML += "<div class='d-flex justify-content-end mb-4'><div class='msg_cotainer_send'>" + data.yourmsg + "</div><div class='img_cont_msg'><img src='https://wallpaperaccess.com/full/6908401.jpg' class='rounded-circle user_img_msg'></div></div >"
                 //console.log(key, true)
             }
             else {
-                userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://wallpaperaccess.com/full/3036188.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + data.yourmsg + " <span class='msg_time'>8:40 AM, Today</span> </div> </div >"
+                userMSGList.innerHTML += "<div class='d-flex justify - content - start mb - 4'> <div class='img_cont_msg' ><img src='https://wallpaperaccess.com/full/3036188.jpg' class='rounded-circle user_img_msg'> </div> <div class='msg_cotainer'> " + data.yourmsg + " </div> </div >"
                 //console.log(key, false)
             }
             // Update the chat UI with the received message
             // ...
         };
+    }
+    else {
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.error('blank msg is not allowed');
+        }
         }
 
         sendButton.addEventListener('click', (event) => {
-            sendMessage(event);
+            if (ws != "") {
+                sendMessage(event);
+            }
+            else {
+                alertify.set('notifier', 'position', 'top-center');
+                alertify.error('First select your friend');
+            }
         });
 
 
