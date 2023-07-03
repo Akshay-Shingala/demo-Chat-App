@@ -26,7 +26,7 @@
 <!--Coded With Love By Mutiullah Samim-->
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
         <a class="navbar-brand" href="#">Chat app</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -127,7 +127,7 @@
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <img id="friendDP" src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg"
+                                <img id="friendDP" src="https://wallpaperaccess.com/full/3036188.jpg"
                                     class="rounded-circle user_img">
                                 <span class="online_icon"></span>
                             </div>
@@ -202,7 +202,12 @@
             userMSGList.innerHTML = ''
             ws = new WebSocket("ws://127.0.0.1:8000/Personal/" + id);
             const userMenuItems = userMenu.getElementsByTagName('div');
-
+            var friendDP = document.getElementById('friendDP');
+            var button = ev.currentTarget;
+            var img = button.previousSibling;
+            friendDP.src = img.src;
+            console.log(friendDP.src)
+            console.log(ev.currentTarget.src)
             for (let i = 0; i < userMenuItems.length; i++) {
                 userMenuItems[i].classList.remove('active');
             }
@@ -210,7 +215,6 @@
 
             //console.log(id,name)
             var videoLink = "http://127.0.0.1:8000/video/" + id
-            console.log(videoLink)
             var videoId = document.getElementById("videoId");
             videoId.href = videoLink;
 
