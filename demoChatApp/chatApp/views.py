@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.shortcuts import redirect
 from rest_framework import permissions
 from rest_framework import views
 from rest_framework.response import Response
@@ -13,6 +14,10 @@ from django.template.response import TemplateResponse
 from django.db.models import Q
 from rest_framework import serializers
 from .models import Chat
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.messages import constants as messages
+
 class LoginView(views.APIView):
     # This view should be accessible also for unauthenticated users.
     permission_classes = (permissions.AllowAny,)
@@ -75,3 +80,11 @@ def video(request,room,created="created"):
             return  TemplateResponse(request,'video.html',{'room':chanelId.id,'created':"created"})
     
     # return redirect(reverse('login'))
+
+
+
+@login_required
+def logoutview(request):
+    logout(request)
+    # messages.info(request, "Logged out successfully!")
+    return redirect("/login/")
