@@ -16,7 +16,6 @@ from rest_framework import serializers
 from .models import Chat
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.messages import constants as messages
 
 class LoginView(views.APIView):
     # This view should be accessible also for unauthenticated users.
@@ -85,6 +84,5 @@ def video(request,room,created="created"):
 
 @login_required
 def logoutview(request):
-    logout(request)
-    # messages.info(request, "Logged out successfully!")
+    logout(request)   
     return redirect("/login/")
