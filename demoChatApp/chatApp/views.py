@@ -36,6 +36,9 @@ class LoginView(views.APIView):
 class RagisterUserAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RagisterUserSerializer
+    def create(self, request, *args, **kwargs):
+        print(request.data)  # Print the request data
+        return super().create(request, *args, **kwargs)
 
 class UserConsumer(ListModelMixin,RetrieveModelMixin,GenericAsyncAPIConsumer):
     queryset=User.objects.all()
@@ -43,7 +46,7 @@ class UserConsumer(ListModelMixin,RetrieveModelMixin,GenericAsyncAPIConsumer):
 
 
 def loginPage(request,s=None):
-    return TemplateResponse(request,"loginRegister.html")
+    return TemplateResponse(request,"loginRegister.html",{'form':RagisterUserSerializer})
 
 def chatPage(request):
     return TemplateResponse(request,"index.html")
