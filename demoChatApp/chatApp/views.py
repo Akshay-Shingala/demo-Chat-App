@@ -10,7 +10,9 @@ from rest_framework.generics import *
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from djangochannelsrestframework.mixins import  ListModelMixin,RetrieveModelMixin
 from django.template.response import TemplateResponse
-
+from django.db.models import Q
+from rest_framework import serializers
+from .models import Chat
 class LoginView(views.APIView):
     # This view should be accessible also for unauthenticated users.
     permission_classes = (permissions.AllowAny,)
@@ -52,7 +54,24 @@ def chatPage(request):
 
 
 def video(request,room,created="created"):
-    if 'email' in request.session.keys():
-        return  TemplateResponse(request,'video.html',{'room':room,'created':created})
+    print(room)
+    resiver = User.objects.get(id=room)
+    sender = request.user
+    chanelId = PersonalChat.objects.filter(Q(sender=sender,resiver=resiver)|Q(sender=resiver,resiver=sender)).first()
+    print("*************************",chanelId.id)
+    
+    get_room = Chat.objects.filter(room_name=chanelId.id)
+    if get_room:
+        c = get_room[0]
+        number = c.allowed_users
+        if int(number) < 2:
+            number = 2
+            c.delete()
+            return  TemplateResponse(request,'video.html',{'room':chanelId.id,'created':"join"})
+    
+    else:
+        create = Chat.objects.create(room_name=chanelId.id,allowed_users=1)
+        if create:
+            return  TemplateResponse(request,'video.html',{'room':chanelId.id,'created':"created"})
     
     # return redirect(reverse('login'))
