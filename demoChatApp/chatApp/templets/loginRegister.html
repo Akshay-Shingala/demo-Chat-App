@@ -30,8 +30,8 @@
       <div class="formTag">
         <h1>Sign in</h1>
         <span>or use your account</span>
-        <input type="text" placeholder="Username" name="userName" required />
-        <input type="password" placeholder="Password" name="password" required />
+        <input type="text" placeholder="Username" name="userName2" required />
+        <input type="password" placeholder="Password" name="password2" required />
         <a href="#">Forgot your password?</a>
         <button id="signInSubmit">Sign In</button>
       </div>
@@ -43,6 +43,7 @@
           <p>To keep connected with us please login with your personal info</p>
           <button class="ghost" id="signIn">Sign In</button>
         </div>
+        {% csrf_token %}
         <div class="overlay-panel overlay-right">
           <h1>Hello, Friend!</h1>
           <p>Enter your personal details and start the journey with us</p>
@@ -53,6 +54,7 @@
   </div>
 
   <script type="text/javascript" src="{% static 'loginRegisterJS.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
   <script type="text/javascript">
     const signInButtonsubmit = document.getElementById("signInSubmit");
@@ -81,7 +83,7 @@
       var email = document.getElementsByName("email")[0].value;
       var password = document.getElementsByName("password")[0].value;
       var confirmPassword = document.getElementsByName("confirmPassword")[0].value;
-
+      console.log("Signup action:", userName, firstName, lastName, email, password, confirmPassword);
       if (!userName || !firstName || !lastName || !email || !password || !confirmPassword) {
         alert("All fields are required.");
         return;
@@ -115,10 +117,10 @@
     }
 
     function validatePassword(password) {
-      var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-      if (!passwordPattern.test(password)) {
-        alert("Password must contain at least eight characters, including one uppercase letter, one lowercase letter, and one number.");
+
+      if (password == "") {
+        alert("Password must contain at least one character.");
         return false;
       }
 
@@ -127,12 +129,63 @@
 
     function signup(userName, firstName, lastName, email, password, confirmPassword) {
       // Perform the signup action
+      var csrfmiddlewaretoken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
       // Use AJAX or other methods to send the data to the server for signup process
       console.log("Signup action:", userName, firstName, lastName, email, password, confirmPassword);
+      console.log('--------------------------------')
+      console.log('{% csrf_token %}')
+      $.ajax({
+        type: 'POST',
+        url: 'http://127.0.0.1:8000/ragister/',
+        data: {
+          'csrfmiddlewaretoken': csrfmiddlewaretoken,
+          'username': userName,
+          'password': password,
+          'email': email,
+          'first_name': firstName,
+          'last_name': lastName,
+        },
+        success: function (data) {
+          alert('now login with your username and password')
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          // Handle the error response
+          for (var x in xhr.responseJSON) {
+            alert(xhr.responseJSON[x])
+          } // Print the error response
+        }
+
+      });
     }
 
     function signin(userName2, password2) {
       console.log("Signin action:", userName2, password2);
+      var csrfmiddlewaretoken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+      $.ajax({
+        type: 'POST',
+        url: 'http://127.0.0.1:8000/LoginUser/',
+        data: {
+          'csrfmiddlewaretoken': csrfmiddlewaretoken,
+          'username': userName2,
+          'password': password2,
+
+        },
+        success: function (data) {
+          if (data.msg) {
+            alert(data.msg)
+          }
+          else {
+            window.location.href = "http://127.0.0.1:8000/chat/";
+          }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          // Handle the error response
+          for (var x in xhr.responseJSON) {
+            alert(xhr.responseJSON[x])
+          } // Print the error response
+        }
+
+      });
     }
   </script>
 </body>

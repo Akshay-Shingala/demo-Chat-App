@@ -6,9 +6,9 @@ urlpatterns = [
     path('ragister/',RagisterUserAPIView.as_view(),name="Ragister"),
     path('usersLists/',UserConsumer.as_asgi(),name="Ragister"),
     path('',include('rest_framework.urls')),
-    path('login/',loginPage,name="LoginPage"),
+    path('',loginPage,name="LoginPage"),
     path('logoutview/',logoutview,name="logoutview"),
-    path('login/<str:s>',loginPage,name="LoginPage"),
+    # path('login/<str:s>',loginPage,name="LoginPage"),
     path('chat/',chatPage,name="chatPage"),
     path('video/<str:room>/',video,name='video'),
     
