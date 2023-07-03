@@ -2,3 +2,5 @@
 demoChatAppENV/
 __pycache__/
 migrations/
+demoChatApp/db.sqlite3
+demoChatApp/db.sqlite3
