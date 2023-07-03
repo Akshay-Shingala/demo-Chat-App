@@ -16,7 +16,6 @@ from rest_framework import serializers
 from .models import Chat
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.messages import constants as messages
 
 class LoginView(views.APIView):
     # This view should be accessible also for unauthenticated users.
@@ -55,12 +54,13 @@ class UserConsumer(ListModelMixin,RetrieveModelMixin,GenericAsyncAPIConsumer):
 def loginPage(request,s=None):
     return TemplateResponse(request,"loginRegister.html",{'form':RagisterUserSerializer})
 
+@login_required(login_url='/')
 def chatPage(request):
     return TemplateResponse(request,"index.html")
 
 
 
-
+@login_required(login_url='/')
 def video(request,room,created="created"):
     print(room)
     resiver = User.objects.get(id=room)
@@ -86,8 +86,7 @@ def video(request,room,created="created"):
 
 
 
-@login_required
+@login_required(login_url='/')
 def logoutview(request):
-    logout(request)
-    # messages.info(request, "Logged out successfully!")
-    return redirect("/login/")
+    logout(request)   
+    return redirect("/")
