@@ -37,11 +37,11 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="#">{{user.username}} <span class="sr-only">(current)</span></a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a class="nav-link" href="/logoutview/">Logout</a>
                 </li>
-                
+
             </ul>
         </div>
     </nav>
@@ -129,7 +129,7 @@
                             <div class="img_cont">
                                 <img id="friendDP" src="https://wallpaperaccess.com/full/3036188.jpg"
                                     class="rounded-circle user_img">
-                                <span class="online_icon"></span>
+                                <!-- <span class="online_icon"></span> -->
                             </div>
 
                             <div class="video_cam ">
@@ -164,7 +164,10 @@
             </div>
         </div>
     </div>
-
+    <link rel="stylesheet" href="{% static 'alertifyjs/css/alertify.min.css' %}" />
+    <!-- include a theme -->
+    <link rel="stylesheet" href="{% static 'alertifyjs/css/themes/default.min.css' %}" />
+    <script type="text/javascript" src="{% static 'alertifyjs/alertify.min.js' %}"></script>
     <script type="text/javascript">
         // get and print users lists
         console.log({{ user.id }})
@@ -189,7 +192,7 @@
                     //print(typeof key.username)
                     const username = String(key.username)
                     if (usetid != key.id) {
-                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ',event)"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://wallpaperaccess.com/full/3036188.jpg" class="rounded-circle user_img"><span class="online_icon offline"></span></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
+                        userMenu.innerHTML += '<div onclick="messageLoaded(' + key.id + ',event)"><li><div class="d-flex bd-highlight"><div class="img_cont"><img src="https://wallpaperaccess.com/full/3036188.jpg" class="rounded-circle user_img"></div><div class="user_info"><span>' + key.username + '</span><p>Taherah left 7 mins ago</p></div></div></li></div>'
                     }
                 }
 
@@ -251,7 +254,8 @@
 
         function sendMessage(event) {
             const message = messageInput.value;
-            ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }}
+            if (message != "") {
+                ws.send(JSON.stringify({ 'text': message, 'user': {{ user.id }}
         }));
         messageInput.value = '';
         event.preventDefault();
@@ -270,10 +274,21 @@
             // Update the chat UI with the received message
             // ...
         };
+    }
+    else {
+            alertify.set('notifier', 'position', 'top-center');
+            alertify.error('blank msg is not allowed');
+        }
         }
 
         sendButton.addEventListener('click', (event) => {
-            sendMessage(event);
+            if (ws != "") {
+                sendMessage(event);
+            }
+            else {
+                alertify.set('notifier', 'position', 'top-center');
+                alertify.error('First select your friend');
+            }
         });
 
 

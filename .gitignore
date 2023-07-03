@@ -1,4 +1,4 @@
-*.sqlite3,
+demoChatApp/db.sqlite3
 demoChatAppENV/
 __pycache__/
-migrations/
+migrations
