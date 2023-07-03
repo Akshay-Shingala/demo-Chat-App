@@ -25,3 +25,7 @@ class GroupMessages(models.Model):
     group=models.ForeignKey(GroupChat,verbose_name="group name",on_delete=models.CASCADE)
     timestamp=models.DateTimeField(auto_now_add=True)
     
+class Chat(models.Model):
+    room_name = models.CharField(max_length=255)
+    allowed_users = models.CharField(max_length=255)
+  
